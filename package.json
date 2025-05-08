@@ -1,0 +1,14 @@
+{
+  "name": "baddbeatz-portfolio",
+  "version": "1.0.0",
+  "description": "BaddBeatz Production & DJ Portfolio packaged as a Windows desktop app",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "package-win": "electron-packager . BaddBeatzPortfolio --platform=win32 --arch=x64 --out=dist --overwrite"
+  },
+  "devDependencies": {
+    "electron": "^26.2.0",
+    "electron-packager": "^17.1.0"
+  }
+}
