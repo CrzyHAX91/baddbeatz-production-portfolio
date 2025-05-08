@@ -1,54 +1,63 @@
-// Firebase configuration and authentication setup
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyCoGmmWoIpqPjGd2KgCCZeU8Xn4oCJnW30",
+  authDomain: "baddbeatz-8a9b4.firebaseapp.com",
+  projectId: "baddbeatz-8a9b4",
+  storageBucket: "baddbeatz-8a9b4.firebasestorage.app",
+  messagingSenderId: "609813125383",
+  appId: "1:609813125383:web:933e8101b6cb4bdcfccda2",
+  measurementId: "G-44NXM5BMEZ"
 };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-auth.js";
+import * as firebaseui from "https://www.gstatic.com/firebasejs/ui/6.0.2/firebase-ui-auth.js";
 
-// Initialize the FirebaseUI Widget using Firebase
-const ui = new firebaseui.auth.AuthUI(firebase.auth());
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const auth = getAuth(app);
 
-// FirebaseUI config
 const uiConfig = {
-    signInOptions: [
-        firebase.auth.EmailAuthProvider.PROVIDER_ID,
-        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-    ],
-    signInFlow: 'popup',
-    callbacks: {
-        signInSuccessWithAuthResult: (authResult) => {
-            const user = authResult.user;
-            document.getElementById('user-name').textContent = user.displayName || user.email;
-            document.getElementById('auth-container').style.display = 'none';
-            document.getElementById('app-container').style.display = 'block';
-            return false;
-        }
+  signInOptions: [
+    // List of OAuth providers supported
+    'password',
+    'google.com'
+  ],
+  signInFlow: 'popup',
+  callbacks: {
+    signInSuccessWithAuthResult: (authResult) => {
+      const user = authResult.user;
+      document.getElementById('auth-container').style.display = 'none';
+      document.getElementById('app-container').style.display = 'block';
+      return false;
+    },
+    signInFailure: (error) => {
+      console.error('Sign-in error:', error);
+      alert('Authentication failed. Please try again.');
     }
+  }
 };
 
-// Handle authentication state changes
-firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-        // User is signed in
-        document.getElementById('user-name').textContent = user.displayName || user.email;
-        document.getElementById('auth-container').style.display = 'none';
-        document.getElementById('app-container').style.display = 'block';
-    } else {
-        // User is signed out
-        document.getElementById('auth-container').style.display = 'flex';
-        document.getElementById('app-container').style.display = 'none';
-        // Initialize the FirebaseUI Widget
-        ui.start('#firebaseui-auth-container', uiConfig);
-    }
+const ui = new firebaseui.auth.AuthUI(auth);
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    document.getElementById('auth-container').style.display = 'none';
+    document.getElementById('app-container').style.display = 'block';
+  } else {
+    document.getElementById('auth-container').style.display = 'flex';
+    document.getElementById('app-container').style.display = 'none';
+    ui.start('#firebaseui-auth-container', uiConfig);
+  }
 });
 
-// Sign out function
 window.signOut = () => {
-    firebase.auth().signOut();
+  signOut(auth);
 };
